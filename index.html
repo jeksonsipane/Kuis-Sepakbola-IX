@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis Interaktif Sepak Bola Kelas 9 - 50 Soal</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f7f6; margin: 0; padding: 15px; color: #333; }
+    .quiz-card { max-width: 800px; margin: auto; background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .header { text-align: center; border-bottom: 2px solid #2e7d32; padding-bottom: 10px; margin-bottom: 15px; }
+    .header h2 { margin: 0; color: #2e7d32; font-size: 22px; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; color: white; margin-top: 5px; }
+    .bg-mudah { background-color: #4caf50; }
+    .bg-menengah { background-color: #ff9800; }
+    .bg-hots { background-color: #f44336; }
+    .progress-bar { width: 100%; background: #eee; height: 8px; border-radius: 4px; margin-bottom: 15px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #2e7d32; width: 0%; transition: 0.3s; }
+    .question-info { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #666; font-weight: 500; }
+    .question-title { font-size: 17px; margin-top: 10px; margin-bottom: 15px; line-height: 1.5; color: #1b5e20; }
+    .options { margin: 20px 0; }
+    .option-btn { display: block; width: 100%; text-align: left; padding: 12px 15px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; background: #fff; cursor: pointer; transition: 0.2s; font-size: 15px; line-height: 1.4; }
+    .option-btn:hover { background-color: #e8f5e9; border-color: #4caf50; }
+    .option-btn.selected { background-color: #c8e6c9; border-color: #2e7d32; font-weight: bold; color: #1b5e20; }
+    .nav-btns { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+    .btn-prev { background: #757575; color: white; }
+    .btn-next { background: #1976d2; color: white; }
+    .btn-finish { background: #2e7d32; color: white; }
+    .result-box { text-align: center; display: none; }
+    .score-circle { width: 130px; height: 130px; border-radius: 50%; background: #2e7d32; color: white; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold; margin: 20px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .summary-details { text-align: left; margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #2e7d32; }
+    .explanation-item { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+
+<div class="quiz-card">
+  <div id="quiz-container">
+    <div class="header">
+      <h2>Kuis PJOK Kelas 9: Permainan Sepak Bola</h2>
+      <span id="level-badge" class="badge bg-mudah">Mudah</span>
+    </div>
+    
+    <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+    
+    <div class="question-info">
+      <span id="question-number">Soal 1 dari 50</span>
+      <span id="answered-count">Terjawab: 0 / 50</span>
+    </div>
+    
+    <div class="question-title" id="question-text">Memuat soal...</div>
+
+    <div class="options" id="options-container"></div>
+
+    <div class="nav-btns">
+      <button class="btn btn-prev" id="btn-prev" onclick="changeQuestion(-1)">Sebelumnya</button>
+      <button class="btn btn-next" id="btn-next" onclick="changeQuestion(1)">Berikutnya</button>
+      <button class="btn btn-finish" id="btn-finish" style="display:none;" onclick="calculateScore()">Selesai & Lihat Nilai</button>
+    </div>
+  </div>
+
+  <div id="result-container" class="result-box">
+    <h2>Hasil Ujian Kuis Anda</h2>
+    <div class="score-circle" id="score-text">0</div>
+    <p id="summary-text" style="font-size: 16px; font-weight: bold;"></p>
+    <div id="result-details" class="summary-details"></div>
+    <br>
+    <button class="btn btn-next" onclick="restartQuiz()">Ulangi Kuis</button>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    // MUDAH (1-37)
+    { q: "1. Induk organisasi sepak bola internasional adalah…", opt: ["a. FIBA", "b. FIFA", "c. PBVSI", "d. IAAF"], ans: 1, lvl: "Mudah" },
+    { q: "2. Induk organisasi sepak bola di Indonesia adalah…", opt: ["a. PSSI", "b. PERBASI", "c. PBSI", "d. PELTI"], ans: 0, lvl: "Mudah" },
+    { q: "3. Berapa jumlah pemain utama dalam satu tim sepak bola di lapangan?", opt: ["a. 6 orang", "b. 9 orang", "c. 11 orang", "d. 12 orang"], ans: 2, lvl: "Mudah" },
+    { q: "4. Durasi waktu pertandingan sepak bola resmi untuk kategori dewasa/umum adalah…", opt: ["a. 2 x 30 menit", "b. 2 x 40 menit", "c. 2 x 45 menit", "d. 2 x 50 menit"], ans: 2, lvl: "Mudah" },
+    { q: "5. Pemain yang bertugas khusus mencegah bola masuk ke gawang dan boleh menggunakan tangan di dalam area penalti adalah…", opt: ["a. Bek", "b. Gelandang", "c. Kiper", "d. Penyerang"], ans: 2, lvl: "Mudah" },
+    { q: "6. Teknik dasar menghentikan bola dalam sepak bola disebut…", opt: ["a. Dribbling", "b. Passing", "c. Controlling/Stopping", "d. Shooting"], ans: 2, lvl: "Mudah" },
+    { q: "7. Mengoper bola kepada teman satu tim disebut…", opt: ["a. Passing", "b. Dribbling", "c. Heading", "d. Tackling"], ans: 0, lvl: "Mudah" },
+    { q: "8. Teknik menggiring bola dengan kaki sambil bergerak maju dinamakan…", opt: ["a. Controlling", "b. Dribbling", "c. Heading", "d. Shooting"], ans: 1, lvl: "Mudah" },
+    { q: "9. Menandul bola menggunakan dahi disebut teknik…", opt: ["a. Passing", "b. Controlling", "c. Heading", "d. Shooting"], ans: 2, lvl: "Mudah" },
+    { q: "10. Tendangan yang dilakukan untuk memulai kembali permainan dari titik tengah lapangan setelah tercipta gol disebut…", opt: ["a. Kick-off", "b. Corner kick", "c. Free kick", "d. Penalty kick"], ans: 0, lvl: "Mudah" },
+    { q: "11. Apabila bola keluar melewati garis samping lapangan, maka permainan dilanjutkan dengan…", opt: ["a. Tendangan sudut", "b. Lemparan kedalam (throw-in)", "c. Tendangan gawang", "d. Kick-off"], ans: 1, lvl: "Mudah" },
+    { q: "12. Tendangan bebas yang diberikan akibat pelanggaran keras di dalam area penalti lawan dinamakan…", opt: ["a. Tendangan sudut", "b. Tendangan gawang", "c. Tendangan penalti", "d. Lemparan ke dalam"], ans: 2, lvl: "Mudah" },
+    { q: "13. Jarak titik putih (titik penalti) ke garis gawang adalah…", opt: ["a. 9 meter", "b. 11 meter", "c. 12 meter", "d. 15 meter"], ans: 1, lvl: "Mudah" },
+    { q: "14. Pemimpin utama pertandingan di dalam lapangan dinamakan…", opt: ["a. Hakim garis", "b. Wasit", "c. Pelatih", "d. Inspektur pertandingan"], ans: 1, lvl: "Mudah" },
+    { q: "15. Kartu yang dikeluarkan wasit sebagai peringatan pertama atas pelanggaran pemain adalah…", opt: ["a. Kartu Merah", "b. Kartu Kuning", "c. Kartu Hijau", "d. Kartu Biru"], ans: 1, lvl: "Mudah" },
+    { q: "16. Jika seorang pemain mendapat dua kali kartu kuning dalam satu pertandingan, maka ia akan menerima…", opt: ["a. Teguran lisan", "b. Kartu merah dan dikeluarkan dari lapangan", "c. Pengurangan poin tim", "d. Pembatalan gol"], ans: 1, lvl: "Mudah" },
+    { q: "17. Istilah bagi pemain yang berposisi sebagai pemain bertahan adalah…", opt: ["a. Forward", "b. Midfielder", "c. Defender/Bek", "d. Striker"], ans: 2, lvl: "Mudah" },
+    { q: "18. Istilah bagi pemain penyerang tengah yang bertugas mencetak gol adalah…", opt: ["a. Playmaker", "b. Striker", "c. Sweeper", "d. Winger"], ans: 1, lvl: "Mudah" },
+    { q: "19. Bagian kaki yang paling sering dan efektif digunakan untuk mengoper bola jarak pendek adalah…", opt: ["a. Kaki bagian dalam", "b. Kaki bagian luar", "c. Punggung kaki", "d. Tumit"], ans: 0, lvl: "Mudah" },
+    { q: "20. Teknik menendang bola melambung tinggi ke depan biasanya menggunakan bagian…", opt: ["a. Kaki bagian dalam", "b. Punggung kaki / Ujung kaki bagian bawah", "c. Tumit", "d. Telapak kaki"], ans: 1, lvl: "Mudah" },
+    { q: "21. Offside terjadi jika pemain penyerang…", opt: ["a. Menyentuh bola dengan tangan", "b. Berada lebih dekat ke garis gawang lawan daripada bola dan pemain bertahan terakhir lawan saat bola dioperkan", "c. Mendorong pemain lawan", "d. Menendang bola keluar lapangan"], ans: 1, lvl: "Mudah" },
+    { q: "22. Istilah penambahan waktu di akhir babak normal akibat adanya penghentian permainan dinamakan…", opt: ["a. Extra time", "b. Injury time / Added time", "c. Time out", "d. Half time"], ans: 1, lvl: "Mudah" },
+    { q: "23. Panjang lapangan sepak bola standar internasional berada pada kisaran…", opt: ["a. 60–75 meter", "b. 75–90 meter", "c. 100–110 meter", "d. 120–130 meter"], ans: 2, lvl: "Mudah" },
+    { q: "24. Saat melakukan lemparan ke dalam (throw-in), kedua kaki pemain harus…", opt: ["a. Melompat tinggi", "b. Menempel di atas tanah di luar atau di atas garis lapangan", "c. Berada jauh di dalam lapangan", "d. Mengangkat salah satu kaki setinggi dada"], ans: 1, lvl: "Mudah" },
+    { q: "25. Melakukan sliding tackle dari belakang yang membahayakan keselamatan lawan akan dijatuhi sanksi…", opt: ["a. Lemparan kedalam", "b. Pelanggaran dan kartu (kuning/merah)", "c. Mulai ulang pertandingan", "d. Peringatan tanpa hukuman"], ans: 1, lvl: "Mudah" },
+    { q: "26. Posisi tubuh yang benar saat mengontrol bola menggunakan dada adalah…", opt: ["a. Membusungkan dada ke depan sambil ditarik sedikit saat bola menempel", "b. Bungkuk ke depan", "c. Miring ke kiri", "d. Miring ke kanan"], ans: 0, lvl: "Mudah" },
+    { q: "27. Pemain yang bertugas mengatur irama permainan di lini tengah dinamakan…", opt: ["a. Striker", "b. Playmaker / Gelandang", "c. Bek tengah", "d. Kiper"], ans: 1, lvl: "Mudah" },
+    { q: "28. Istilah handsball berarti…", opt: ["a. Mengoper bola pakai kepala", "b. Bola tersentuh tangan secara aktif oleh pemain selain kiper di area permainan", "c. Menandul bola dengan bahu", "d. Menendang bola dengan tumit"], ans: 1, lvl: "Mudah" },
+    { q: "29. Tendangan sudut (corner kick) terjadi apabila bola keluar melewati garis gawang dan bola terakhir tersentuh oleh…", opt: ["a. Pemain penyerang", "b. Pemain bertahan / Kiper", "c. Wasit", "d. Pelatih"], ans: 1, lvl: "Mudah" },
+    { q: "30. Tendangan gawang (goal kick) terjadi apabila bola keluar melewati garis gawang dan bola terakhir tersentuh oleh…", opt: ["a. Pemain penyerang", "b. Pemain bertahan", "c. Hakim garis", "d. Kiper sendiri"], ans: 0, lvl: "Mudah" },
+    { q: "31. Gerakan menyundul bola sebaiknya mempergunakan bagian kepala yaitu…", opt: ["a. Ubun-ubun", "b. Dahi (jidat)", "c. Kepala bagian belakang", "d. Samping kepala (pelipis)"], ans: 1, lvl: "Mudah" },
+    { q: "32. Tujuan utama dari permainan sepak bola adalah…", opt: ["a. Menunjukkan keterampilan individu", "b. Memasukkan bola ke gawang lawan sebanyak-banyaknya dan mencegah gawang sendiri kemasukan", "c. Bermain bertahan selama 90 menit", "d. Membuat lawan terkena kartu merah"], ans: 1, lvl: "Mudah" },
+    { q: "33. Posisi awal saat melakukan kick-off berada di…", opt: ["a. Dalam kotak penalti", "b. Titik tengah lapangan", "c. Sudut lapangan", "d. Garis samping"], ans: 1, lvl: "Mudah" },
+    { q: "34. Durasi istirahat di antara dua babak (half time) adalah…", opt: ["a. 5 menit", "b. 10 menit", "c. 15 menit", "d. 30 menit"], ans: 2, lvl: "Mudah" },
+    { q: "35. Jumlah hakim garis (assistent referee) dalam pertandingan resmi sepak bola adalah…", opt: ["a. 1 orang", "b. 2 orang", "c. 3 orang", "d. 4 orang"], ans: 1, lvl: "Mudah" },
+    { q: "36. Menembak bola ke arah gawang lawan dengan sekuat tenaga disebut…", opt: ["a. Passing", "b. Controlling", "c. Dribbling", "d. Shooting"], ans: 3, lvl: "Mudah" },
+    { q: "37. Pada lemparan ke dalam, bola harus dilempar menggunakan…", opt: ["a. Satu tangan dari samping", "b. Dua tangan dari belakang melewati atas kepala", "c. Dua tangan dari bawah dada", "d. Satu tangan dilempar seperti mendatar"], ans: 1, lvl: "Mudah" },
+
+    // MENENGAH (38-45)
+    { q: "38. Andi melakukan umpan pendek cepat ke Budi, kemudian Budi langsung mengembalikan bola ke ruang kosong di depan Andi yang sedang berlari. Kombinasi teknik gerak ini dikenal dengan istilah…", opt: ["a. Wall pass (1-2 pass)", "b. Long pass", "c. Cross pass", "d. Overhead pass"], ans: 0, lvl: "Menengah" },
+    { q: "39. Saat menerima umpan lambung yang deras, gerakan kaki yang benar untuk menghentikan bola menggunakan telapak kaki adalah…", opt: ["a. Menahan kaki tetap kaku dan keras saat bola datang", "b. Menyongsong bola dengan mengayunkan kaki ke depan", "c. Mengangkat kaki dan menariknya sedikit ke belakang mengikuti arah laju bola", "d. Melompat tinggi sambil menerjang bola"], ans: 2, lvl: "Menengah" },
+    { q: "40. Seorang pemain hendak melakukan tendangan melengkung (curve shot) menyusur tanah mengincar pojok gawang. Bagian kaki dan perkenaan bola yang paling tepat adalah…", opt: ["a. Punggung kaki tepat di tengah bola", "b. Kaki bagian dalam/luar pada bagian samping bawah bola", "c. Ujung jari kaki tepat di bagian atas bola", "d. Tumit kaki pada bagian tengah bola"], ans: 1, lvl: "Menengah" },
+    { q: "41. Variasi gerak spesifik menggiring bola dengan merubah arah secara mendadak bertujuan untuk…", opt: ["a. Mengulur-ulur waktu pertandingan", "b. Memperdaya dan melewati pemain bertahan lawan", "c. Melatih kekuatan otot kaki", "d. Memudahkan wasit melihat bola"], ans: 1, lvl: "Menengah" },
+    { q: "42. Saat melakukan sundulan bola sambil melompat (jump heading), awalan dan tumpuan yang tepat menggunakan…", opt: ["a. Tumpuan dua kaki rapat tanpa tekukan", "b. Tumpuan satu atau dua kaki dengan menekuk lutut untuk tolakan maksimal", "c. Melompat dengan mendarat menggunakan punggung", "d. Berlari lurus tanpa melompat"], ans: 1, lvl: "Menengah" },
+    { q: "43. Pelanggaran dangerous play (permainan berbahaya) seperti mengangkat kaki terlalu tinggi hingga dekat dengan kepala lawan saat memperebutkan bola akan diganjar dengan hukuman…", opt: ["a. Tendangan penalti langsung", "b. Tendangan bebas tidak langsung (indirect free kick) untuk tim lawan", "c. Lemparan ke dalam", "d. Drop ball"], ans: 1, lvl: "Menengah" },
+    { q: "44. Pada saat menggiring bola cepat (speed dribbling), perkenaan kaki pada bola dan jarak bola dari kaki yang paling ideal adalah…", opt: ["a. Menggunakan punggung kaki, jarak bola agak jauh namun tetap dalam jangkauan lari", "b. Menggunakan telapak kaki, bola menempel erat di kaki", "c. Menggunakan tumit, bola dilempar jauh ke depan", "d. Menggunakan kaki bagian dalam, berjalan lambat"], ans: 0, lvl: "Menengah" },
+    { q: "45. Ketika melakukan lemparan ke dalam (throw-in), gerakan lecutan badan yang benar untuk menambah jarak lemparan adalah…", opt: ["a. Membungkukkan badan ke depan sejak awal gerakan", "b. Melengkungkan badan ke belakang lalu melecutkan ke depan bersamaan dengan ayunan kedua tangan", "c. Memutar badan ke kiri dan ke kanan", "d. Melompat sambil melemparkan bola dari samping pinggang"], ans: 1, lvl: "Menengah" },
+
+    // HOTS (46-50)
+    { q: "46. ANALISIS TAKTIK: Tim A menerapkan pola pertahanan garis tinggi (high defensive line). Namun, lawan memiliki penyerang sayap yang sangat cepat dan kebobolan dua gol lewat umpan terobosan lambung. Penyesuaian taktis yang paling efektif untuk babak kedua adalah…", opt: ["a. Meminta seluruh pemain depan berhenti mengejar bola", "b. Menurunkan garis pertahanan lebih dalam (deep block) dan menutup ruang kosong belakang bek", "c. Mengubah posisi kiper menjadi penyerang tengah", "d. Menginstruksikan bek tengah untuk selalu overlapping"], ans: 1, lvl: "HOTS", exp: "Menurunkan garis pertahanan (deep block) memotong ruang tembus dibelakang bek yang biasa dimanfaatkan lawan berkecepatan tinggi." },
+    { q: "47. ANALISIS OFFSIDE: P1 mengoper ke P2 yang berada di posisi offside. Namun bola memantul dari bek lawan yang mencoba memotong umpan secara tidak sempurna. P2 mengambil bola muntah tersebut dan mencetak gol. Keputusan wasit yang tepat adalah…", opt: ["a. Gol sah, karena bola menyentuh pemain bertahan terlebih dahulu", "b. Offside, karena P2 berada di posisi offside saat bola ditendang dan mendapat keuntungan dari posisi tersebut", "c. Hukuman kartu merah untuk pemain bertahan lawan", "d. Tendangan sudut untuk tim penyerang"], ans: 1, lvl: "HOTS", exp: "Sesuai Laws of the Game, posisi offside dinilai saat bola dioper oleh teman. Pantulan tidak sengaja dari bek tidak menghapuskan status offside P2." },
+    { q: "48. ANALISIS FORMASI: Sebuah tim menggunakan formasi 3-5-2. Saat menghadapi lawan berformasi 4-3-3 dengan sayap cepat, tim tersebut sering kewalahan di area pertahanan samping. Penyebab utama kerentanan tersebut adalah…", opt: ["a. Jumlah penyerang terlalu banyak di depan", "b. Kedua pemain sayap (wing-back) terlambat kembali membantu pertahanan saat transisi bertahan", "c. Tiga bek tengah berdiri terlalu melebar ke tepi lapangan", "d. Gelandang tengah tidak mau berlari mengejar kiper"], ans: 1, lvl: "HOTS", exp: "Dalam formasi 3-5-2, wing-back bertanggung jawab penuh menjaga lebar lapangan. Jika terlambat turun saat transisi, area pertahanan samping menjadi sangat terbuka." },
+    { q: "49. EVALUASI KESALAHAN TEKNIK: Seorang pemain melakukan tendangan penalti, namun bola meluncur jauh melambung tinggi di atas mistar gawang. Kesalahan utama posisi tubuh pemain saat menendang bola adalah…", opt: ["a. Kaki tumpu berada sejajar di samping bola dan badan dicenderungkan ke depan", "b. Kaki tumpu berada terlalu jauh di belakang bola dan posisi badan terlalu mendongak/condong ke belakang", "c. Menendang bola menggunakan punggung kaki dengan ayunan yang kuat", "d. Pandangan mata tertuju pada bola saat menendang"], ans: 1, lvl: "HOTS", exp: "Posisi tubuh yang mendongak/condong ke belakang serta kaki tumpu jauh di belakang bola menyebabkan sudut pantul/dorongan bola mengarah melambung tinggi." },
+    { q: "50. PENGAMBILAN KEPUTUSAN: Tim Anda tertinggal 0-1 pada menit ke-88. Tim lawan menumpuk seluruh pemainnya di kotak penalti (bus parking). Strategi penyerangan yang paling efisien dalam waktu tersisa adalah…", opt: ["a. Melakukan umpan-umpan pendek melingkar di area pertahanan sendiri", "b. Memanfaatkan lebar lapangan, melakukan kombinasi umpan silang lambung (crossing) cepat, dan memaksimalkan bola mati (set piece)", "c. Menginstruksikan semua pemain untuk dribbling individu menembus tengah", "d. Mengulur-ulur waktu agar pertandingan cepat selesai"], ans: 1, lvl: "HOTS", exp: "Menghadapi pertahanan rapat di tengah (bus parking), membongkar lewat lebar lapangan (crossing) dan set piece adalah metode paling cepat menciptakan peluang gol." }
+  ];
+
+  let currentIdx = 0;
+  let userAnswers = new Array(questions.length).fill(null);
+
+  function loadQuestion() {
+    const q = questions[currentIdx];
+    document.getElementById("question-number").innerText = `Soal ${currentIdx + 1} dari ${questions.length}`;
+    
+    // hitung terjawab
+    const answered = userAnswers.filter(a => a !== null).length;
+    document.getElementById("answered-count").innerText = `Terjawab: ${answered} / ${questions.length}`;
+
+    document.getElementById("question-text").innerText = q.q;
+    
+    const badge = document.getElementById("level-badge");
+    badge.innerText = q.lvl;
+    badge.className = `badge bg-${q.lvl.toLowerCase()}`;
+
+    const optsHtml = q.opt.map((o, i) => `
+      <button class="option-btn ${userAnswers[currentIdx] === i ? 'selected' : ''}" onclick="selectOption(${i})">
+        ${o}
+      </button>
+    `).join('');
+    document.getElementById("options-container").innerHTML = optsHtml;
+
+    document.getElementById("progress").style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+    document.getElementById("btn-prev").style.display = currentIdx === 0 ? "none" : "block";
+    
+    if (currentIdx === questions.length - 1) {
+      document.getElementById("btn-next").style.display = "none";
+      document.getElementById("btn-finish").style.display = "block";
+    } else {
+      document.getElementById("btn-next").style.display = "block";
+      document.getElementById("btn-finish").style.display = "none";
+    }
+  }
+
+  function selectOption(idx) {
+    userAnswers[currentIdx] = idx;
+    loadQuestion();
+  }
+
+  function changeQuestion(dir) {
+    currentIdx += dir;
+    loadQuestion();
+  }
+
+  function calculateScore() {
+    let correctCount = 0;
+    questions.forEach((q, i) => {
+      if (userAnswers[i] === q.ans) correctCount++;
+    });
+
+    const finalScore = Math.round((correctCount / questions.length) * 100);
+
+    document.getElementById("quiz-container").style.display = "none";
+    document.getElementById("result-container").style.display = "block";
+    document.getElementById("score-text").innerText = finalScore;
+    document.getElementById("summary-text").innerText = `Jawaban Benar: ${correctCount} dari 50 Soal (${finalScore}%)`;
+
+    // Tampilkan detail pembahasan HOTS
+    let detailsHtml = "<h3>Pembahasan Soal HOTS:</h3>";
+    questions.forEach((q, i) => {
+      if (q.lvl === "HOTS") {
+        const isCorrect = userAnswers[i] === q.ans;
+        detailsHtml += `
+          <div class="explanation-item">
+            <strong>Soal ${i+1} (${q.lvl}):</strong> ${isCorrect ? '<span style="color:green;">✓ Benar</span>' : '<span style="color:red;">✗ Salah/Kosong</span>'}<br>
+            <em>Kunci Jawaban: ${q.opt[q.ans]}</em><br>
+            <small style="color:#555;"><strong>Pembahasan:</strong> ${q.exp}</small>
+          </div>
+        `;
+      }
+    });
+    document.getElementById("result-details").innerHTML = detailsHtml;
+  }
+
+  function restartQuiz() {
+    currentIdx = 0;
+    userAnswers.fill(null);
+    document.getElementById("quiz-container").style.display = "block";
+    document.getElementById("result-container").style.display = "none";
+    loadQuestion();
+  }
+
+  // Jalankan kuis pertama kali
+  loadQuestion();
+</script>
+</body>
+</html>
